@@ -41,7 +41,7 @@ h1 { text-align: center; margin-bottom: 20px; }
   position: relative;
   overflow: hidden;
   min-height: 180px;
-  background: rgba(30,30,30,0.9); /* tarjeta sólida */
+  background: rgba(30,30,30,0.9);
   transition: transform 0.2s, box-shadow 0.2s, border 0.3s;
   border: 2px solid transparent;
 }
@@ -69,17 +69,17 @@ h1 { text-align: center; margin-bottom: 20px; }
 .online { font-weight: bold; }
 .offline { font-weight: bold; color: rgba(255,255,255,0.6); }
 
-/* TOP: AVATAR + NOMBRE + POKÉBALL */
+/* TOP: AVATAR + NOMBRE */
 .top { display: flex; align-items: center; margin-bottom: 12px; }
 .avatar { width: 60px; height: 60px; border-radius: 50%; margin-right: 12px; }
-.pokeball { width: 20px; height: 20px; margin-right: 6px; vertical-align: middle; }
 
 /* INFO STREAMER */
 .info { display: flex; flex-direction: column; font-size: 0.95em; margin-top: 6px; }
 .info .title { font-weight: bold; margin-bottom: 4px; word-wrap: break-word; }
 .info .category { font-weight: normal; color: #ccc; }
-.info .badges { margin-top: 6px; display: flex; align-items: center; }
-.badge { width: 20px; height: 20px; margin-right: 4px; }
+.info .badges { margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+.badge { width: 20px; height: 20px; opacity: 0.3; }
+.badge.active { opacity: 1; }
 .info .deaths { margin-top: 4px; font-size: 0.85em; color: #ff6666; }
 
 /* ESTADO */
@@ -118,7 +118,7 @@ function formatTime(started) {
 const streamerLocke = {
   "arnauz10": { badges: 0, deaths: 0 },
   "kikoelquelon": { badges: 0, deaths: 0 },
-  "lolnezan78": { badges: 0, deaths: 0 },
+  "lolnezan78": { badges: 1, deaths: 0 },
   "novaiosca": { badges: 0, deaths: 0 },
   "azogil": { badges: 0, deaths: 0 },
   "sitinho6": { badges: 0, deaths: 0 },
@@ -127,17 +127,24 @@ const streamerLocke = {
   "raulito21": { badges: 0, deaths: 2 },
   "troncito999": { badges: 0, deaths: 0 },
   "sasen82": { badges: 0, deaths: 0 },
-  "carr0quin": { badges: 3, deaths: 14 },
+  "carr0quin": { badges: 3, deaths: 13 },
   "archyx05": { badges: 0, deaths: 0 },
   "naniroma": { badges: 0, deaths: 0 },
-  "kstillopkm": { badges: 0, deaths: 0 },
+  "kstillopkm": { badges: 1, deaths: 2 },
   "jaborro95gordo": { badges: 0, deaths: 0 }
 };
 
-// Limitar longitud de caracteres
-function truncate(str, max) {
-  return str.length > max ? str.slice(0, max - 1) + "…" : str;
-}
+// Array de URLs de las 8 medallas de Kanto
+const medallas = [
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/1.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/2.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/3.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/4.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/5.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/6.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/7.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/8.png"
+];
 
 async function load() {
   try {
@@ -167,28 +174,24 @@ async function load() {
         const viewers = stream.viewers || "";
         const started = stream.started_at || "";
 
-        const pokeball = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
-
-        const badges = streamerLocke[name]?.badges || 0;
-        const deaths = streamerLocke[name]?.deaths || 0;
-
-        let badgeHTML = "";
-        for(let i=0; i<badges; i++){
-          badgeHTML += `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/relic-gold.png" class="badge" alt="Badge">`;
+        // Medallas: 8 diferentes, activas según badges
+        let badgeHTML = '';
+        for(let i=0;i<medallas.length;i++){
+          badgeHTML += `<img src="${medallas[i]}" class="badge ${i<streamerLocke[name].badges?'active':''}" alt="Badge">`;
         }
 
         div.innerHTML = `
           <div class="top">
             <img src="${data.logos[name]}" class="avatar" alt="Logo ${name}">
             <div>
-              <span><img src="${pokeball}" class="pokeball" alt="Pokeball">${name}</span>
+              <span>${name}</span>
               <div class="info">
                 ${title ? `<span class="title">${title}</span>` : ""}
                 ${game ? `<span class="category">🎮 ${game}</span>` : ""}
                 ${viewers && isOnline ? `<span>👀 ${viewers}</span>` : ""}
                 ${started && isOnline ? `<span class="stream-timer" data-started="${started}">⏱ 00:00:00</span>` : ""}
-                ${badgeHTML ? `<div class="badges">${badgeHTML}</div>` : ""}
-                ${deaths ? `<div class="deaths">💀 Pokémon muertos: ${deaths}</div>` : ""}
+                <div class="badges">${badgeHTML}</div>
+                ${streamerLocke[name].deaths ? `<div class="deaths">💀 Pokémon muertos: ${streamerLocke[name].deaths}</div>` : ""}
               </div>
             </div>
           </div>
