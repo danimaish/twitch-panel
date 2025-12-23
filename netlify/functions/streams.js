@@ -15,7 +15,8 @@ const STREAMERS = [
   "archyx05",
   "naniroma",
   "kstillopkm",
-  "jaborro95gordo"
+  "jaborro95gordo",
+  "adlon8"
   // Añade tus streamers aquí
 ];
 
