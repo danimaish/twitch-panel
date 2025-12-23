@@ -4,55 +4,146 @@
 <meta charset="UTF-8">
 <title>Patreon Locke Twitch - Pokémon League</title>
 <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
 <style>
-/* BODY Y TEMA */
+/* BODY */
 body {
   font-family: Arial, sans-serif;
-  padding: 15px 30px 30px 30px;
-  transition: background 0.3s, color 0.3s;
+  padding: 15px 30px 30px;
   color: white;
-  background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('assets/Kanto.png');
+  background-image:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url('assets/Kanto.png');
   background-size: cover;
   background-position: center;
 }
-body.light {
-  color: black;
-  background-image: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('assets/Kanto.png');
+
+/* TITULO */
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
 }
 
-/* TITULO Y BOTON */
-h1 { text-align: center; margin-bottom: 20px; }
-#toggleTheme { display:block; margin:0 auto 25px; cursor: pointer; padding: 8px 14px; border-radius: 6px; }
-
-/* GRID TABLERO */
+/* GRID STREAMERS */
 #list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
+/* TARJETA */
+.streamer {
+  background: rgba(30,30,30,0.92);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 2px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.streamer:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+}
+
+/* ONLINE */
+.streamer.online-card {
+  border: 2px solid #00ff7f;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 5px #00ff7f; }
+  50% { box-shadow: 0 0 18px #00ff7f; }
+  100% { box-shadow: 0 0 5px #00ff7f; }
+}
+
+/* TOP */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+/* INFO */
+.info {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95em;
+}
+
+.title {
+  font-weight: bold;
+  word-wrap: break-word;
+}
+
+.category {
+  color: #ccc;
+}
+
+.badges {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.badge {
+  width: 20px;
+  height: 20px;
+  opacity: 0.2;
+}
+
+.badge.active {
+  opacity: 1;
+}
+
+.deaths {
+  color: #ff6666;
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+.status {
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.offline {
+  color: rgba(255,255,255,0.6);
+}
+
 /* RANKINGS */
 #rankings {
-  margin-top: 40px;
+  margin-top: 50px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+  gap: 40px;
 }
 
 .ranking {
-  background: rgba(30,30,30,0.9);
-  border-radius: 12px;
+  background: rgba(20,20,20,0.85);
   padding: 20px;
+  border-radius: 12px;
 }
 
 .ranking h2 {
-  text-align: center;
   margin-bottom: 15px;
 }
 
-.ranking ol {
-  list-style: decimal;
-  padding-left: 20px;
+.ranking ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .ranking li {
@@ -67,129 +158,69 @@ h1 { text-align: center; margin-bottom: 20px; }
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  flex-shrink: 0;
 }
-
-@media(max-width: 800px){
-  #rankings {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* TARJETA STREAMER */
-.streamer {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  min-height: 180px;
-  background: rgba(30,30,30,0.9);
-  transition: transform 0.2s, box-shadow 0.2s, border 0.3s;
-  border: 2px solid transparent;
-}
-
-/* TARJETA ONLINE */
-.streamer.online-card {
-  animation: pulse 1.5s infinite;
-  border: 2px solid #00ff7f;
-}
-
-/* PULSING ANIMATION */
-@keyframes pulse {
-  0% { box-shadow: 0 0 5px #00ff7f; }
-  50% { box-shadow: 0 0 20px #00ff7f; }
-  100% { box-shadow: 0 0 5px #00ff7f; }
-}
-
-/* HOVER ANIMADO */
-.streamer:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(255,255,255,0.2);
-}
-
-/* ESTADOS ONLINE / OFFLINE */
-.online { font-weight: bold; }
-.offline { font-weight: bold; color: rgba(255,255,255,0.6); }
-
-/* TOP: AVATAR + NOMBRE */
-.top { display: flex; align-items: center; margin-bottom: 12px; }
-.avatar { width: 60px; height: 60px; border-radius: 50%; margin-right: 12px; }
-
-/* INFO STREAMER */
-.info { display: flex; flex-direction: column; font-size: 0.95em; margin-top: 6px; }
-.info .title { font-weight: bold; margin-bottom: 4px; word-wrap: break-word; }
-.info .category { font-weight: normal; color: #ccc; }
-.info .badges { margin-top: 6px; display: flex; align-items: center; gap: 4px; }
-.badge { width: 20px; height: 20px; opacity: 0.2; }
-.badge.active { opacity: 1; }
-.info .deaths { margin-top: 4px; font-size: 0.85em; color: #ff6666; }
-
-/* ESTADO */
-.status { font-weight:bold; margin-top: 8px; }
 
 /* RESPONSIVE */
-@media(max-width: 1200px){ #list { grid-template-columns: repeat(3, 1fr); } }
-@media(max-width: 900px){ #list { grid-template-columns: repeat(2, 1fr); } }
-@media(max-width: 600px){ #list { grid-template-columns: 1fr; } }
+@media(max-width: 1200px){
+  #list { grid-template-columns: repeat(3, 1fr); }
+}
+@media(max-width: 900px){
+  #list { grid-template-columns: repeat(2, 1fr); }
+  #rankings { grid-template-columns: 1fr; }
+}
+@media(max-width: 600px){
+  #list { grid-template-columns: 1fr; }
+}
 </style>
 </head>
+
 <body>
+
 <h1>🎮 Streamers Patreon Locke</h1>
+
 <div id="list"></div>
 
 <div id="rankings">
   <div class="ranking">
-    <h2>🏆 Ranking de Medallas</h2>
-    <ol id="ranking-badges"></ol>
+    <h2>🏅 Ranking de Medallas</h2>
+    <ul id="ranking-badges"></ul>
   </div>
-
   <div class="ranking">
-    <h2>💀 Ranking de Muertes</h2>
-    <ol id="ranking-deaths"></ol>
+    <h2>☠️ Ranking de Muertes</h2>
+    <ul id="ranking-deaths"></ul>
   </div>
 </div>
 
-
 <script>
-const body2 = document.body;
-
-// Formato de tiempo
 function formatTime(started) {
-  if(!started) return "";
   const start = new Date(started);
   const now = new Date();
   let diff = Math.floor((now - start)/1000);
   const h = Math.floor(diff/3600); diff %= 3600;
   const m = Math.floor(diff/60); diff %= 60;
-  const s = diff;
-  return `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+  return `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${diff.toString().padStart(2,"0")}`;
 }
 
-// Datos extra Locke
+/* DATOS LOCKE */
 const streamerLocke = {
-  "arnauz10": { badges: 1, deaths: 5 },
-  "kikoelquelon": { badges: 0, deaths: 0 },
-  "lolnezan78": { badges: 2, deaths: 2 },
-  "novaiosca": { badges: 0, deaths: 0 },
-  "azogil": { badges: 4, deaths: 10 },
-  "sitinho6": { badges: 2, deaths: 3 },
-  "sqdgiorgi": { badges: 1, deaths: 2 },
-  "tvcharliestoltes": { badges: 1, deaths: 0 },
-  "raulito21": { badges: 1, deaths: 4 },
-  "troncito999": { badges: 3, deaths: 14 },
-  "sasen82": { badges: 4, deaths: 4 },
-  "carr0quin": { badges: 4, deaths: 9 },
-  "archyx05": { badges: 0, deaths: 0 },
-  "naniroma": { badges: 3, deaths: 6 },
-  "kstillopkm": { badges: 4, deaths: 12 },
-  "jaborro95gordo": { badges: 2, deaths: 2 }
+  arnauz10:{badges:1,deaths:5},
+  kikoelquelon:{badges:0,deaths:0},
+  lolnezan78:{badges:2,deaths:2},
+  novaiosca:{badges:0,deaths:0},
+  azogil:{badges:4,deaths:10},
+  sitinho6:{badges:2,deaths:3},
+  sqdgiorgi:{badges:1,deaths:2},
+  tvcharliestoltes:{badges:1,deaths:0},
+  raulito21:{badges:1,deaths:4},
+  troncito999:{badges:3,deaths:14},
+  sasen82:{badges:4,deaths:4},
+  carr0quin:{badges:4,deaths:9},
+  archyx05:{badges:0,deaths:0},
+  naniroma:{badges:3,deaths:6},
+  kstillopkm:{badges:4,deaths:12},
+  jaborro95gordo:{badges:2,deaths:2}
 };
 
-// Array de URLs de las 8 medallas de Kanto
 const medallas = [
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/1.png",
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/2.png",
@@ -201,132 +232,93 @@ const medallas = [
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/8.png"
 ];
 
-function renderRankings() {
-  const medals = ["🥇", "🥈", "🥉"];
+async function load() {
+  const res = await fetch("/.netlify/functions/streams");
+  const data = await res.json();
 
-  const badgeRanking = Object.entries(streamerLocke)
-    .sort((a,b) => b[1].badges - a[1].badges)
-    .filter(([_, data]) => data.badges > 0);
+  const container = document.getElementById("list");
+  container.innerHTML = "";
 
-  const deathRanking = Object.entries(streamerLocke)
-    .sort((a,b) => b[1].deaths - a[1].deaths)
-    .filter(([_, data]) => data.deaths > 0);
+  const online = data.all.filter(n => data.online.includes(n));
+  const offline = data.all.filter(n => !data.online.includes(n));
 
+  [...online, ...offline].forEach(name => {
+    const isOnline = data.online.includes(name);
+    const stream = data.streamInfo[name] || {};
+    const locke = streamerLocke[name];
+
+    let badgeHTML = "";
+    medallas.forEach((m,i)=>{
+      badgeHTML += `<img src="${m}" class="badge ${i<locke.badges?'active':''}">`;
+    });
+
+    const div = document.createElement("div");
+    div.className = "streamer" + (isOnline?" online-card":"");
+
+    div.innerHTML = `
+      <div class="top">
+        <img src="${data.logos[name]}" class="avatar">
+        <div class="info">
+          <strong>${name}</strong>
+          ${stream.title?`<span class="title">${stream.title}</span>`:""}
+          ${stream.game?`<span class="category">🎮 ${stream.game}</span>`:""}
+          ${isOnline?`<span class="stream-timer" data-started="${stream.started_at}">⏱ 00:00:00</span>`:""}
+          <div class="badges">${badgeHTML}</div>
+          ${locke.deaths?`<div class="deaths">💀 ${locke.deaths} muertes</div>`:""}
+        </div>
+      </div>
+      <span class="status ${isOnline?'':'offline'}">${isOnline?'🟢 ONLINE':'⚫ OFFLINE'}</span>
+    `;
+
+    div.onclick = ()=>window.open(`https://twitch.tv/${name}`,"_blank");
+    container.appendChild(div);
+  });
+
+  renderRankings(data.logos);
+}
+
+function renderRankings(logos){
+  const medals = ["🥇","🥈","🥉"];
   const badgeList = document.getElementById("ranking-badges");
   const deathList = document.getElementById("ranking-deaths");
 
   badgeList.innerHTML = "";
   deathList.innerHTML = "";
 
-  badgeRanking.forEach(([name, data], index) => {
-    const emoji = medals[index] || "🏅";
-    badgeList.innerHTML += `
-      <li>
-        <span>${emoji}</span>
-        <img src="/.netlify/functions/avatar/${name}" class="ranking-avatar" alt="${name}">
-        <span>${name}</span>
-        <span>— ${data.badges} medallas</span>
-      </li>
-    `;
-  });
+  Object.entries(streamerLocke)
+    .sort((a,b)=>b[1].badges-a[1].badges)
+    .filter(e=>e[1].badges>0)
+    .forEach(([name,data],i)=>{
+      badgeList.innerHTML += `
+        <li>
+          ${medals[i]||"🏅"}
+          <img src="${logos[name]}" class="ranking-avatar">
+          ${name} — ${data.badges}
+        </li>`;
+    });
 
-  deathRanking.forEach(([name, data], index) => {
-    const emoji = medals[index] || "☠️";
-    deathList.innerHTML += `
-      <li>
-        <span>${emoji}</span>
-        <img src="/.netlify/functions/avatar/${name}" class="ranking-avatar" alt="${name}">
-        <span>${name}</span>
-        <span>— ${data.deaths} muertes</span>
-      </li>
-    `;
-  });
+  Object.entries(streamerLocke)
+    .sort((a,b)=>b[1].deaths-a[1].deaths)
+    .filter(e=>e[1].deaths>0)
+    .forEach(([name,data],i)=>{
+      deathList.innerHTML += `
+        <li>
+          ${medals[i]||"☠️"}
+          <img src="${logos[name]}" class="ranking-avatar">
+          ${name} — ${data.deaths}
+        </li>`;
+    });
 }
 
-
-
-async function load() {
-  try {
-    const res = await fetch("/.netlify/functions/streams");
-    const data = await res.json();
-
-    const onlineList = data.all.filter(name => data.online.includes(name));
-    const offlineList = data.all.filter(name => !data.online.includes(name));
-
-    const container = document.getElementById("list");
-    container.innerHTML = "";
-
-    function renderList(list){
-      list.forEach(name => {
-        const div = document.createElement("div");
-        div.className = "streamer";
-
-        const isOnline = data.online.includes(name);
-        if(isOnline) div.classList.add("online-card");
-
-        const status = isOnline ? "🟢 ONLINE" : "⚫ OFFLINE";
-        const statusClass = isOnline ? "online" : "offline";
-
-        const stream = data.streamInfo[name] || {};
-        const title = stream.title || "";
-        const game = stream.game || "";
-        const viewers = stream.viewers || "";
-        const started = stream.started_at || "";
-
-        // Medallas: 8 diferentes, activas según badges
-        let badgeHTML = '';
-        for(let i=0;i<medallas.length;i++){
-          badgeHTML += `<img src="${medallas[i]}" class="badge ${i<streamerLocke[name].badges?'active':''}" alt="Badge">`;
-        }
-
-        div.innerHTML = `
-          <div class="top">
-            <img src="${data.logos[name]}" class="avatar" alt="Logo ${name}">
-            <div>
-              <span>${name}</span>
-              <div class="info">
-                ${title ? `<span class="title">${title}</span>` : ""}
-                ${game ? `<span class="category">🎮 ${game}</span>` : ""}
-                ${viewers && isOnline ? `<span>👀 ${viewers}</span>` : ""}
-                ${started && isOnline ? `<span class="stream-timer" data-started="${started}">⏱ 00:00:00</span>` : ""}
-                <div class="badges">${badgeHTML}</div>
-                ${streamerLocke[name].deaths ? `<div class="deaths">💀 Pokémon muertos: ${streamerLocke[name].deaths}</div>` : ""}
-              </div>
-            </div>
-          </div>
-          <span class="${statusClass} status">${status}</span>
-        `;
-
-        div.onclick = () => {
-          window.open(`https://twitch.tv/${name}`, "_blank");
-        };
-
-        container.appendChild(div);
-      });
-    }
-
-    renderList(onlineList);
-    renderList(offlineList);
-
-  } catch(err) {
-    console.error("Error cargando streams", err);
-  }
-}
-
-// Actualiza contadores de tiempo
-function updateTimers() {
-  document.querySelectorAll(".stream-timer").forEach(span => {
-    const started = span.dataset.started;
-    if(started){
-      span.textContent = `⏱ ${formatTime(started)}`;
-    }
+setInterval(()=>{
+  document.querySelectorAll(".stream-timer").forEach(t=>{
+    t.textContent = "⏱ "+formatTime(t.dataset.started);
   });
-}
+},1000);
 
 load();
-renderRankings();
-setInterval(load, 60000);
-setInterval(updateTimers, 1000);
+setInterval(load,60000);
 </script>
+
 </body>
 </html>
