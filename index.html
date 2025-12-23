@@ -31,6 +31,51 @@ h1 { text-align: center; margin-bottom: 20px; }
   gap: 20px;
 }
 
+/* RANKINGS */
+#rankings {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.ranking {
+  background: rgba(30,30,30,0.9);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.ranking h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.ranking ol {
+  list-style: decimal;
+  padding-left: 20px;
+}
+
+.ranking li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.ranking-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@media(max-width: 800px){
+  #rankings {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* TARJETA STREAMER */
 .streamer {
   display: flex;
@@ -96,6 +141,19 @@ h1 { text-align: center; margin-bottom: 20px; }
 <h1>🎮 Streamers Patreon Locke</h1>
 <div id="list"></div>
 
+<div id="rankings">
+  <div class="ranking">
+    <h2>🏆 Ranking de Medallas</h2>
+    <ol id="ranking-badges"></ol>
+  </div>
+
+  <div class="ranking">
+    <h2>💀 Ranking de Muertes</h2>
+    <ol id="ranking-deaths"></ol>
+  </div>
+</div>
+
+
 <script>
 const body2 = document.body;
 
@@ -142,6 +200,50 @@ const medallas = [
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/7.png",
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/8.png"
 ];
+
+function renderRankings() {
+  const medals = ["🥇", "🥈", "🥉"];
+
+  const badgeRanking = Object.entries(streamerLocke)
+    .sort((a,b) => b[1].badges - a[1].badges)
+    .filter(([_, data]) => data.badges > 0);
+
+  const deathRanking = Object.entries(streamerLocke)
+    .sort((a,b) => b[1].deaths - a[1].deaths)
+    .filter(([_, data]) => data.deaths > 0);
+
+  const badgeList = document.getElementById("ranking-badges");
+  const deathList = document.getElementById("ranking-deaths");
+
+  badgeList.innerHTML = "";
+  deathList.innerHTML = "";
+
+  badgeRanking.forEach(([name, data], index) => {
+    const emoji = medals[index] || "🏅";
+    badgeList.innerHTML += `
+      <li>
+        <span>${emoji}</span>
+        <img src="/.netlify/functions/avatar/${name}" class="ranking-avatar" alt="${name}">
+        <span>${name}</span>
+        <span>— ${data.badges} medallas</span>
+      </li>
+    `;
+  });
+
+  deathRanking.forEach(([name, data], index) => {
+    const emoji = medals[index] || "☠️";
+    deathList.innerHTML += `
+      <li>
+        <span>${emoji}</span>
+        <img src="/.netlify/functions/avatar/${name}" class="ranking-avatar" alt="${name}">
+        <span>${name}</span>
+        <span>— ${data.deaths} muertes</span>
+      </li>
+    `;
+  });
+}
+
+
 
 async function load() {
   try {
@@ -222,6 +324,7 @@ function updateTimers() {
 }
 
 load();
+renderRankings();
 setInterval(load, 60000);
 setInterval(updateTimers, 1000);
 </script>
