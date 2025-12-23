@@ -6,7 +6,6 @@
 <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 
 <style>
-/* BODY */
 body {
   font-family: Arial, sans-serif;
   padding: 15px 30px 30px;
@@ -18,7 +17,6 @@ body {
   background-position: center;
 }
 
-/* TITULO */
 h1 {
   text-align: center;
   margin-bottom: 25px;
@@ -50,7 +48,6 @@ h1 {
   box-shadow: 0 10px 20px rgba(255,255,255,0.2);
 }
 
-/* ONLINE */
 .streamer.online-card {
   border: 2px solid #00ff7f;
   animation: pulse 1.5s infinite;
@@ -62,7 +59,6 @@ h1 {
   100% { box-shadow: 0 0 5px #00ff7f; }
 }
 
-/* TOP */
 .top {
   display: flex;
   align-items: center;
@@ -75,21 +71,14 @@ h1 {
   border-radius: 50%;
 }
 
-/* INFO */
 .info {
   display: flex;
   flex-direction: column;
   font-size: 0.95em;
 }
 
-.title {
-  font-weight: bold;
-  word-wrap: break-word;
-}
-
-.category {
-  color: #ccc;
-}
+.title { font-weight: bold; }
+.category { color: #ccc; }
 
 .badges {
   display: flex;
@@ -103,9 +92,7 @@ h1 {
   opacity: 0.2;
 }
 
-.badge.active {
-  opacity: 1;
-}
+.badge.active { opacity: 1; }
 
 .deaths {
   color: #ff6666;
@@ -118,26 +105,25 @@ h1 {
   margin-top: 8px;
 }
 
-.offline {
-  color: rgba(255,255,255,0.6);
-}
+.offline { color: rgba(255,255,255,0.6); }
 
 /* RANKINGS */
 #rankings {
   margin-top: 50px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
 }
 
 .ranking {
-  background: rgba(20,20,20,0.85);
+  background: rgba(20,20,20,0.88);
   padding: 20px;
   border-radius: 12px;
 }
 
 .ranking h2 {
   margin-bottom: 15px;
+  text-align: center;
 }
 
 .ranking ul {
@@ -182,11 +168,17 @@ h1 {
 
 <div id="rankings">
   <div class="ranking">
-    <h2>🏅 Ranking de Medallas</h2>
+    <h2>🏅 Medallas</h2>
     <ul id="ranking-badges"></ul>
   </div>
+
   <div class="ranking">
-    <h2>☠️ Ranking de Muertes</h2>
+    <h2>🏆 Ranking Locke</h2>
+    <ul id="ranking-combined"></ul>
+  </div>
+
+  <div class="ranking">
+    <h2>☠️ Muertes</h2>
     <ul id="ranking-deaths"></ul>
   </div>
 </div>
@@ -201,7 +193,6 @@ function formatTime(started) {
   return `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${diff.toString().padStart(2,"0")}`;
 }
 
-/* DATOS LOCKE */
 const streamerLocke = {
   arnauz10:{badges:1,deaths:5},
   kikoelquelon:{badges:0,deaths:0},
@@ -221,16 +212,9 @@ const streamerLocke = {
   jaborro95gordo:{badges:2,deaths:2}
 };
 
-const medallas = [
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/1.png",
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/2.png",
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/3.png",
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/4.png",
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/5.png",
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/6.png",
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/7.png",
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/8.png"
-];
+const medallas = Array.from({length:8},(_,i)=>
+  `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/badges/${i+1}.png`
+);
 
 async function load() {
   const res = await fetch("/.netlify/functions/streams");
@@ -279,33 +263,49 @@ async function load() {
 
 function renderRankings(logos){
   const medals = ["🥇","🥈","🥉"];
+
   const badgeList = document.getElementById("ranking-badges");
   const deathList = document.getElementById("ranking-deaths");
+  const combinedList = document.getElementById("ranking-combined");
 
   badgeList.innerHTML = "";
   deathList.innerHTML = "";
+  combinedList.innerHTML = "";
 
   Object.entries(streamerLocke)
+    .map(([n,d])=>({...d,name:n}))
+    .forEach(d=>d.score=d.badges*10-d.deaths);
+
+  [...Object.entries(streamerLocke)]
     .sort((a,b)=>b[1].badges-a[1].badges)
     .filter(e=>e[1].badges>0)
-    .forEach(([name,data],i)=>{
+    .forEach(([n,d],i)=>{
       badgeList.innerHTML += `
-        <li>
-          ${medals[i]||"🏅"}
-          <img src="${logos[name]}" class="ranking-avatar">
-          ${name} — ${data.badges}
+        <li>${medals[i]||"🏅"}
+          <img src="${logos[n]}" class="ranking-avatar">
+          ${n} — ${d.badges}
         </li>`;
     });
 
-  Object.entries(streamerLocke)
+  [...Object.entries(streamerLocke)]
+    .sort((a,b)=>(b[1].badges*10-b[1].deaths)-(a[1].badges*10-a[1].deaths))
+    .filter(e=>e[1].badges>0||e[1].deaths>0)
+    .forEach(([n,d],i)=>{
+      combinedList.innerHTML += `
+        <li>${medals[i]||"🏆"}
+          <img src="${logos[n]}" class="ranking-avatar">
+          ${n} — ${d.badges*10-d.deaths}
+        </li>`;
+    });
+
+  [...Object.entries(streamerLocke)]
     .sort((a,b)=>b[1].deaths-a[1].deaths)
     .filter(e=>e[1].deaths>0)
-    .forEach(([name,data],i)=>{
+    .forEach(([n,d],i)=>{
       deathList.innerHTML += `
-        <li>
-          ${medals[i]||"☠️"}
-          <img src="${logos[name]}" class="ranking-avatar">
-          ${name} — ${data.deaths}
+        <li>${medals[i]||"☠️"}
+          <img src="${logos[n]}" class="ranking-avatar">
+          ${n} — ${d.deaths}
         </li>`;
     });
 }
