@@ -1,7 +1,6 @@
 // Función serverless para Netlify
 const STREAMERS = [
   "arnauz10",
-  "kikoelquelon",
   "lolnezan78",
   "novaiosca",
   "azogil",
