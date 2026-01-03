@@ -65,7 +65,10 @@ h1 {
   display: flex;
   align-items: center;
   gap: 12px;
+  position: relative;
+  z-index: 1;
 }
+
 
 .avatar {
   width: 60px;
@@ -101,16 +104,19 @@ h1 {
 
 .badge.active { opacity: 1; }
 
-/* SELLO ADMITTED */
+/* SELLO ADMITTED - ESTILO PASAPORTE */
 .admitted {
-  width: 60px;
   position: absolute;
-  top: 10px;
-  right: 10px;
-  transform: rotate(-12deg);
-  opacity: 0.85;
-  mix-blend-mode: multiply;
+  top: 50%;
+  left: 50%;
+  width: 180px;              /* TAMAÑO GRANDE */
+  transform: translate(-50%, -50%) rotate(-15deg);
+  opacity: 0.12;             /* MUY DE FONDO */
+  pointer-events: none;
+  z-index: 0;
+  filter: grayscale(100%) contrast(1.2);
 }
+
 
 /* CONTADORES */
 .deaths {
@@ -126,6 +132,8 @@ h1 {
 }
 
 .status {
+  position: relative;
+  z-index: 1;
   font-weight: bold;
   margin-top: 8px;
 }
