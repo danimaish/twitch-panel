@@ -236,21 +236,21 @@ function formatTime(started) {
 /* DATOS LOCKE */
 const streamerLocke = {
   arnauz10:{badges:7,deaths:19,trainers:0},
-  lolnezan78:{badges:8,deaths:21,trainers:0},
-  novaiosca:{badges:8,deaths:14,trainers:0},
+  lolnezan78:{badges:9,deaths:21,trainers:0},
+  novaiosca:{badges:9,deaths:14,trainers:0},
   azogil:{badges:8,deaths:18,trainers:0},
-  sitinho6:{badges:4,deaths:16,trainers:0},
-  sqdgiorgi:{badges:8,deaths:24,trainers:0},
-  tvcharliestoltes:{badges:6,deaths:24,trainers:0},
+  sitinho6:{badges:6,deaths:12,trainers:0},
+  sqdgiorgi:{badges:9,deaths:24,trainers:0},
+  tvcharliestoltes:{badges:6,deaths:26,trainers:0},
   raulito21:{badges:7,deaths:14,trainers:0},
   troncito999:{badges:3,deaths:14,trainers:0},
   sasen82:{badges:7,deaths:8,trainers:0},
-  carr0quin:{badges:9,deaths:24,trainers:0},
+  carr0quin:{badges:9,deaths:24,trainers:2},
   archyx05:{badges:5,deaths:20,trainers:0},
-  naniroma:{badges:8,deaths:26,trainers:0},
-  kstillopkm:{badges:8,deaths:18,trainers:0},
-  adlon8:{badges:8,deaths:24,trainers:0},
-  jaborro95gordo:{badges:8,deaths:49,trainers:0}
+  naniroma:{badges:9,deaths:26,trainers:0},
+  kstillopkm:{badges:9,deaths:18,trainers:0},
+  adlon8:{badges:9,deaths:24,trainers:0},
+  jaborro95gordo:{badges:9,deaths:49,trainers:0}
 };
 
 const medallas = Array.from({length:8},(_,i)=>
@@ -295,7 +295,7 @@ async function load() {
           ${isOnline?`<span class="stream-timer" data-started="${stream.started_at}">⏱ 00:00:00</span>`:""}
           <div class="badges">${badgeHTML}</div>
           ${locke.deaths?`<div class="deaths">💀 ${locke.deaths} muertes</div>`:""}
-          ${locke.trainers?`<div class="trainers">🧢 ${locke.trainers} entrenadores derrotados</div>`:""}
+          ${locke.trainers?`<div class="trainers">🧢 ${locke.trainers} lideres extras derrotados</div>`:""}
         </div>
       </div>
       <span class="status ${isOnline?'':'offline'}">${isOnline?'🟢 ONLINE':'⚫ OFFLINE'}</span>
