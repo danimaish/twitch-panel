@@ -35,12 +35,14 @@ h1 {
   border-radius: 12px;
   padding: 20px;
   cursor: pointer;
-  min-height: 180px;
+  min-height: 190px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   border: 2px solid transparent;
   transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 .streamer:hover {
@@ -77,13 +79,18 @@ h1 {
   font-size: 0.95em;
 }
 
-.title { font-weight: bold; }
+.title {
+  font-weight: bold;
+  word-wrap: break-word;
+}
+
 .category { color: #ccc; }
 
 .badges {
   display: flex;
   gap: 4px;
   margin-top: 6px;
+  flex-wrap: wrap;
 }
 
 .badge {
@@ -94,10 +101,27 @@ h1 {
 
 .badge.active { opacity: 1; }
 
+/* SELLO ADMITTED */
+.admitted {
+  width: 60px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transform: rotate(-12deg);
+  opacity: 0.85;
+}
+
+/* CONTADORES */
 .deaths {
   color: #ff6666;
   font-size: 0.85em;
   margin-top: 4px;
+}
+
+.trainers {
+  color: #66ccff;
+  font-size: 0.85em;
+  margin-top: 2px;
 }
 
 .status {
@@ -193,23 +217,24 @@ function formatTime(started) {
   return `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${diff.toString().padStart(2,"0")}`;
 }
 
+/* DATOS LOCKE */
 const streamerLocke = {
-  arnauz10:{badges:7,deaths:19},
-  lolnezan78:{badges:8,deaths:21},
-  novaiosca:{badges:8,deaths:14},
-  azogil:{badges:8,deaths:18},
-  sitinho6:{badges:4,deaths:16},
-  sqdgiorgi:{badges:8,deaths:24},
-  tvcharliestoltes:{badges:6,deaths:24},
-  raulito21:{badges:7,deaths:14},
-  troncito999:{badges:3,deaths:14},
-  sasen82:{badges:7,deaths:8},
-  carr0quin:{badges:8,deaths:24},
-  archyx05:{badges:5,deaths:20},
-  naniroma:{badges:8,deaths:26},
-  kstillopkm:{badges:8,deaths:18},
-  adlon8:{badges:8,deaths:24},
-  jaborro95gordo:{badges:8,deaths:49}
+  arnauz10:{badges:7,deaths:19,trainers:0},
+  lolnezan78:{badges:8,deaths:21,trainers:0},
+  novaiosca:{badges:8,deaths:14,trainers:0},
+  azogil:{badges:8,deaths:18,trainers:0},
+  sitinho6:{badges:4,deaths:16,trainers:0},
+  sqdgiorgi:{badges:8,deaths:24,trainers:0},
+  tvcharliestoltes:{badges:6,deaths:24,trainers:0},
+  raulito21:{badges:7,deaths:14,trainers:0},
+  troncito999:{badges:3,deaths:14,trainers:0},
+  sasen82:{badges:7,deaths:8,trainers:0},
+  carr0quin:{badges:8,deaths:24,trainers:0},
+  archyx05:{badges:5,deaths:20,trainers:0},
+  naniroma:{badges:8,deaths:26,trainers:0},
+  kstillopkm:{badges:8,deaths:18,trainers:0},
+  adlon8:{badges:8,deaths:24,trainers:0},
+  jaborro95gordo:{badges:8,deaths:49,trainers:0}
 };
 
 const medallas = Array.from({length:8},(_,i)=>
@@ -236,10 +261,15 @@ async function load() {
       badgeHTML += `<img src="${m}" class="badge ${i<locke.badges?'active':''}">`;
     });
 
+    const admittedStamp = locke.badges >= 9
+      ? `<img src="assets/admitted.png" class="admitted" alt="Admitted">`
+      : "";
+
     const div = document.createElement("div");
     div.className = "streamer" + (isOnline?" online-card":"");
 
     div.innerHTML = `
+      ${admittedStamp}
       <div class="top">
         <img src="${data.logos[name]}" class="avatar">
         <div class="info">
@@ -249,6 +279,7 @@ async function load() {
           ${isOnline?`<span class="stream-timer" data-started="${stream.started_at}">⏱ 00:00:00</span>`:""}
           <div class="badges">${badgeHTML}</div>
           ${locke.deaths?`<div class="deaths">💀 ${locke.deaths} muertes</div>`:""}
+          ${locke.trainers?`<div class="trainers">🧢 ${locke.trainers} entrenadores derrotados</div>`:""}
         </div>
       </div>
       <span class="status ${isOnline?'':'offline'}">${isOnline?'🟢 ONLINE':'⚫ OFFLINE'}</span>
@@ -272,13 +303,12 @@ function renderRankings(logos){
   deathList.innerHTML = "";
   combinedList.innerHTML = "";
 
-  Object.entries(streamerLocke)
-    .map(([n,d])=>({...d,name:n}))
-    .forEach(d=>d.score=d.badges*10-d.deaths);
+  Object.entries(streamerLocke).forEach(d=>{
+    d.score = d.badges*10 - d.deaths;
+  });
 
   [...Object.entries(streamerLocke)]
     .sort((a,b)=>b[1].badges-a[1].badges)
-    .filter(e=>e[1].badges>0)
     .forEach(([n,d],i)=>{
       badgeList.innerHTML += `
         <li>${medals[i]||"🏅"}
@@ -289,7 +319,6 @@ function renderRankings(logos){
 
   [...Object.entries(streamerLocke)]
     .sort((a,b)=>(b[1].badges*10-b[1].deaths)-(a[1].badges*10-a[1].deaths))
-    .filter(e=>e[1].badges>0||e[1].deaths>0)
     .forEach(([n,d],i)=>{
       combinedList.innerHTML += `
         <li>${medals[i]||"🏆"}
@@ -300,7 +329,6 @@ function renderRankings(logos){
 
   [...Object.entries(streamerLocke)]
     .sort((a,b)=>b[1].deaths-a[1].deaths)
-    .filter(e=>e[1].deaths>0)
     .forEach(([n,d],i)=>{
       deathList.innerHTML += `
         <li>${medals[i]||"☠️"}
