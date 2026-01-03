@@ -104,18 +104,25 @@ h1 {
 
 .badge.active { opacity: 1; }
 
-/* SELLO ADMITTED - ESTILO PASAPORTE */
+/* SELLO ADMITTED - ESTAMPADO PASAPORTE VERDE */
 .admitted {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 180px;              /* TAMAÑO GRANDE */
+  width: 260px; /* MUY GRANDE */
+  max-width: 130%;
   transform: translate(-50%, -50%) rotate(-15deg);
-  opacity: 0.12;             /* MUY DE FONDO */
+  opacity: 0.28; /* SE VE EL VERDE */
   pointer-events: none;
   z-index: 0;
-  filter: grayscale(100%) contrast(1.2);
+
+  /* realza el verde sin quemarlo */
+  filter: saturate(1.6) contrast(1.15) brightness(0.95);
+
+  /* efecto tinta */
+  mix-blend-mode: multiply;
 }
+
 
 
 /* CONTADORES */
